@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 public class IntegerArrayIO {
@@ -36,8 +35,10 @@ public class IntegerArrayIO {
         int length = dataInput.readInt();
 
         ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
-        ReadableByteChannel channel = Channels.newChannel(dataInput);
-        channel.read(tmpBuffer);
+
+        byte[] buffer = new byte[tmpBuffer.remaining()];
+        dataInput.readFully(buffer);
+        tmpBuffer.put(buffer, 0, buffer.length);
 
         tmpBuffer.rewind();
         IntBuffer intBuffer = tmpBuffer.asIntBuffer();
